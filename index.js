@@ -1,3 +1,27 @@
+const main = document.querySelector('.main');
+const search_button = document.querySelector('.search');
+const inp = search_button.previousElementSibling;
+const results = document.getElementById('results');
+
+
+search_button.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (check_validity()) {
+        results.innerHTML = '';
+        let data = get_data(inp.value);
+        data.then((obj) => {
+            if (obj.error) {
+                display_no_matches(obj.error.message)
+            }
+            else {
+                display_data(obj);
+            }
+        })
+    }
+})
+
+
+
 
 async function get_data(inp) {
     const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=69ebdce0bd7c44ba98102952230106&q=${inp}`, {mode: 'cors'});
@@ -15,20 +39,40 @@ function display_data(data) {
     let feelslike_f = data.current.feelslike_f;
     let humidity = data.current.humidity;
     console.log([city, country])
+    let temps = [temp_f, temp_c, feelslike_f, feelslike_c];
 
-    let display_location = document.createElement('span');
-    display_location.textContent = `${city}, ${country}`;
+    let location = display_location(city, country);
+    let temp = create_temp_div(temps);
+    let humidity_div = create_humidity(humidity);
+    let feelslike_div = create_feelslike(feelslike_f);
 
-    let temp = create_temp_div(temp_f, temp_c);
 
-
-    results.append(display_location, temp);
-
+    results.append(location, temp, humidity_div, feelslike_div);
 }
 
-function create_temp_div(temp_f, temp_c) {
+function create_feelslike(temp) {
+    let div = document.createElement('div');
+    div.id = 'feelslike';
+    div.textContent = `Feels like: ${temp}° F`;
+    return div;
+}
+
+function create_humidity(humidity) {
+    let div = document.createElement('div');
+    div.textContent = `Humidity: ${humidity}`;
+    return div;
+}
+
+function display_location(city, country) {
+    let display_location = document.createElement('span');
+    display_location.textContent = `${city}, ${country}`;
+    return display_location;
+}
+
+function create_temp_div(temps) {
     let temp_div = document.createElement('div');
     let temp = document.createElement('span');
+    let [temp_f, temp_c] = temps
     temp.textContent = `${temp_f}° F`;
     let change_unit = document.createElement('button');
     change_unit.classList.add('change-unit');
@@ -36,10 +80,10 @@ function create_temp_div(temp_f, temp_c) {
 
     change_unit.addEventListener('click', (e) => {
         if (change_unit.textContent == 'Show celsius') {
-            change_units(temp, change_unit, temp_c, 'c');
+            change_units(temp, change_unit, temps, 'c');
         }
         else {
-            change_units(temp, change_unit, temp_f, 'f');
+            change_units(temp, change_unit, temps, 'f');
         }
     })
 
@@ -49,38 +93,22 @@ function create_temp_div(temp_f, temp_c) {
     return temp_div;
 }
 
-function change_units(temp, change_unit, new_temp, unit) {
+function change_units(temp, change_unit, temps, unit) {
+    let [temp_f, temp_c, feelslike_f, feelslike_c] = temps;
+    let feelslike = document.getElementById('feelslike');
+    // change feels like
     if (unit == 'c') {
-        temp.textContent = `${new_temp}° C`;
+        temp.textContent = `${temp_c}° C`;
         change_unit.textContent = 'Show farenheit';
+        feelslike.textContent = `Feels like: ${feelslike_c}° C`
     }
     else {
-        temp.textContent = `${new_temp}° F`;
+        temp.textContent = `${temp_f}° F`;
         change_unit.textContent = 'Show celsius';
+        feelslike.textContent = `Feels like: ${feelslike_f}° F`
+
     }
 }
-
-const main = document.querySelector('.main');
-const search_button = document.querySelector('.search');
-const inp = search_button.previousElementSibling;
-const results = document.querySelector('.results');
-
-
-search_button.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (check_validity()) {
-        let data = get_data(inp.value);
-        clear_results();
-        data.then((obj) => {
-            if (obj.error) {
-                display_no_matches(obj.error.message)
-            }
-            else {
-                display_data(obj);
-            }
-        })
-    }
-})
 
 function check_validity() {
     const form = document.querySelector('form');
@@ -104,10 +132,4 @@ function display_no_matches(error_message) {
     msg.textContent = error_message;
     msg.style.color = 'red';
     results.append(msg);
-}
-
-function clear_results() {
-    for (let elem of results.children) {
-        elem.remove();
-    }
 }

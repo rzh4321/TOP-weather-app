@@ -73,7 +73,7 @@ input.invalid:focus {
     padding: 0.3em;
 }
 
-.results {
+#results {
     gap: 30px;
     display: flex;
     flex-direction: column;
