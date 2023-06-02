@@ -20,6 +20,7 @@ function process_data(data) {
 const main = document.querySelector('.main');
 const search_button = document.querySelector('.search');
 const inp = search_button.previousElementSibling;
+const results = document.querySelector('.results');
 
 
 search_button.addEventListener('click', (e) => {
@@ -58,6 +59,6 @@ function display_no_matches(error_message) {
     let msg = document.createElement('span');
     msg.textContent = error_message;
     msg.style.color = 'red';
-    main.append(msg);
+    results.append(msg);
 
 }
