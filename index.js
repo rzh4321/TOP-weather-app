@@ -1,16 +1,9 @@
 
 async function get_data(inp) {
-    try {
-        const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=69ebdce0bd7c44ba98102952230106&q=${inp}`, {mode: 'cors'});
-        const data = await response.json();
-        console.log(data);
-        return data;
-    }
-    catch (e) {
-        throw "No matches found";
-    }
-
-
+    const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=69ebdce0bd7c44ba98102952230106&q=${inp}`, {mode: 'cors'});
+    const data = await response.json();
+    console.log(data);
+    return data;
 }
 
 function process_data(data) {
@@ -24,7 +17,8 @@ function process_data(data) {
     console.log([city, country])
 }
 
-let search_button = document.querySelector('.search');
+const main = document.querySelector('.main');
+const search_button = document.querySelector('.search');
 const inp = search_button.previousElementSibling;
 
 
@@ -32,8 +26,14 @@ search_button.addEventListener('click', (e) => {
     e.preventDefault();
     if (check_validity()) {
         let data = get_data(inp.value);
-        data.then(process_data(data));
-        data.catch((e) => display_no_matches(e));
+        data.then((obj) => {
+            if (obj.error) {
+                display_no_matches(obj.error.message)
+            }
+            else {
+                process_data(obj);
+            }
+        })
     }
 })
 
@@ -54,8 +54,10 @@ function check_validity() {
     return form.checkValidity();
 }
 
-function display_no_matches() {
-    
-}
+function display_no_matches(error_message) {
+    let msg = document.createElement('span');
+    msg.textContent = error_message;
+    msg.style.color = 'red';
+    main.append(msg);
 
-process_data();
+}
