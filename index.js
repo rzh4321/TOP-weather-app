@@ -27,6 +27,7 @@ search_button.addEventListener('click', (e) => {
     e.preventDefault();
     if (check_validity()) {
         let data = get_data(inp.value);
+        clear_results();
         data.then((obj) => {
             if (obj.error) {
                 display_no_matches(obj.error.message)
@@ -60,5 +61,10 @@ function display_no_matches(error_message) {
     msg.textContent = error_message;
     msg.style.color = 'red';
     results.append(msg);
+}
 
+function clear_results() {
+    for (let elem of results.children) {
+        elem.remove();
+    }
 }
