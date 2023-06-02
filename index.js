@@ -6,7 +6,7 @@ async function get_data(inp) {
     return data;
 }
 
-function process_data(data) {
+function display_data(data) {
     let city = data.location.name;
     let country = data.location.country;
     let temp_c = data.current.temp_c;
@@ -15,6 +15,49 @@ function process_data(data) {
     let feelslike_f = data.current.feelslike_f;
     let humidity = data.current.humidity;
     console.log([city, country])
+
+    let display_location = document.createElement('span');
+    display_location.textContent = `${city}, ${country}`;
+
+    let temp = create_temp_div(temp_f, temp_c);
+
+
+    results.append(display_location, temp);
+
+}
+
+function create_temp_div(temp_f, temp_c) {
+    let temp_div = document.createElement('div');
+    let temp = document.createElement('span');
+    temp.textContent = `${temp_f}° F`;
+    let change_unit = document.createElement('button');
+    change_unit.classList.add('change-unit');
+    change_unit.textContent = 'Show celsius';
+
+    change_unit.addEventListener('click', (e) => {
+        if (change_unit.textContent == 'Show celsius') {
+            change_units(temp, change_unit, temp_c, 'c');
+        }
+        else {
+            change_units(temp, change_unit, temp_f, 'f');
+        }
+    })
+
+    temp_div.append(temp, change_unit)
+    temp_div.classList.add('flex');
+    temp_div.style.gap = '20px';
+    return temp_div;
+}
+
+function change_units(temp, change_unit, new_temp, unit) {
+    if (unit == 'c') {
+        temp.textContent = `${new_temp}° C`;
+        change_unit.textContent = 'Show farenheit';
+    }
+    else {
+        temp.textContent = `${new_temp}° F`;
+        change_unit.textContent = 'Show celsius';
+    }
 }
 
 const main = document.querySelector('.main');
@@ -33,7 +76,7 @@ search_button.addEventListener('click', (e) => {
                 display_no_matches(obj.error.message)
             }
             else {
-                process_data(obj);
+                display_data(obj);
             }
         })
     }

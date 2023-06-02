@@ -74,8 +74,16 @@ input.invalid:focus {
 }
 
 .results {
+    gap: 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
+}
+
+.change-unit {
+    align-self: flex-start;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 12px;
 }
