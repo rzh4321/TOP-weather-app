@@ -8,12 +8,14 @@
     font-size: 70px;
     align-items: center;
     gap: 20px;
+    background-color: cyan;
 }
 
 body {
     background-color: cyan;
     padding: 50px;
     font-family: 'Ubuntu', sans-serif;
+    background-size: contain;
 }
 
 label {
@@ -45,6 +47,8 @@ form {
 }
 
 button {
+    font-family: 'Ubuntu', sans-serif;
+
     cursor: pointer;
 }
 
@@ -86,4 +90,11 @@ input.invalid:focus {
     padding: 5px;
     border-radius: 5px;
     font-size: 12px;
+}
+
+#change-background {
+    padding: 5px;
+    position: relative;
+    bottom: 20px;
+    border-radius: 10px;
 }

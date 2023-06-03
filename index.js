@@ -2,6 +2,7 @@ const main = document.querySelector('.main');
 const search_button = document.querySelector('.search');
 const inp = search_button.previousElementSibling;
 const results = document.querySelector('.results');
+const change_background_btn = document.getElementById('change-background');
 let unit = 'f';
 
 search_button.addEventListener('click', (e) => {
@@ -18,7 +19,24 @@ search_button.addEventListener('click', (e) => {
             }
         })
     }
-})
+});
+
+change_background_btn.addEventListener('click', (e) => {
+    get_gif();
+});
+
+get_gif();
+
+async function get_gif() {
+    let response = await fetch('https://api.giphy.com/v1/gifs/random?api_key=WxSdGxdbxIiNDBY69rpFKtaxLmKCtXXV&?', {mode: 'cors'});
+    let data = await response.json();
+    while (data.data.images == undefined) {
+        response = await fetch('https://api.giphy.com/v1/gifs/random?api_key=WxSdGxdbxIiNDBY69rpFKtaxLmKCtXXV&?', {mode: 'cors'});
+        data = await response.json();
+    }
+    const link = data.data.images.original.url;
+    document.body.style.backgroundImage = `url(${link})`;
+}
 
 async function get_data(inp) {
     const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=69ebdce0bd7c44ba98102952230106&q=${inp}`, {mode: 'cors'});
